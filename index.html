@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>God Level Calculator</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color: white;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  padding: 20px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  margin-bottom: 20px;
+}
+
+input, button {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 10px;
+  border: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+canvas {
+  width: 100%;
+  background: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card" id="auth">
+<h2>Login / Signup</h2>
+<input id="username" placeholder="Username">
+<button onclick="login()">Login</button>
+</div>
+
+<div id="app" style="display:none;">
+
+<div class="card">
+<h2>Calculator</h2>
+<input id="display" placeholder="Type: sin 30 + 2^3">
+<button onclick="calculate()">Calculate</button>
+<button onclick="voice()">🎤</button>
+</div>
+
+<div class="card">
+<h2>AI Assistant</h2>
+<input id="aiInput" placeholder="Ask math question...">
+<button onclick="askAI()">Ask</button>
+<p id="aiOutput"></p>
+</div>
+
+<div class="card">
+<h2>Graph Plotter</h2>
+<input id="graphInput" placeholder="x*x , Math.sin(x)">
+<button onclick="plot()">Plot</button>
+<canvas id="graph" height="300"></canvas>
+</div>
+
+<div class="card">
+<h2>History</h2>
+<ul id="history"></ul>
+</div>
+
+</div>
+
+</div>
+
+<script>
+let currentUser = null;
+
+// LOGIN
+function login() {
+  let user = document.getElementById("username").value;
+  if (!user) return alert("Enter username");
+
+  currentUser = user;
+  localStorage.setItem("user", user);
+
+  document.getElementById("auth").style.display = "none";
+  document.getElementById("app").style.display = "block";
+
+  loadHistory();
+}
+
+// CALCULATOR
+function parse(exp) {
+  return exp.replace(/sin/g,"Math.sin")
+            .replace(/\^/g,"**")
+            .replace(/Math\.sin\((.*?)\)/g,
+              (_,v)=>`Math.sin((${v})*Math.PI/180)`
+            );
+}
+
+function calculate() {
+  let exp = parse(document.getElementById("display").value);
+  let res = eval(exp);
+  saveHistory(exp + " = " + res);
+}
+
+// HISTORY
+function saveHistory(text) {
+  let key = "history_" + currentUser;
+  let data = JSON.parse(localStorage.getItem(key)) || [];
+  data.push(text);
+  localStorage.setItem(key, JSON.stringify(data));
+  loadHistory();
+}
+
+function loadHistory() {
+  let key = "history_" + currentUser;
+  let data = JSON.parse(localStorage.getItem(key)) || [];
+  let list = document.getElementById("history");
+  list.innerHTML = "";
+  data.forEach(i=>{
+    let li=document.createElement("li");
+    li.textContent=i;
+    list.appendChild(li);
+  });
+}
+
+// VOICE
+function voice() {
+  let r=new(window.SpeechRecognition||webkitSpeechRecognition)();
+  r.onresult=e=>{
+    document.getElementById("display").value=e.results[0][0].transcript;
+  };
+  r.start();
+}
+
+// AI (simple logic)
+function askAI() {
+  let q=document.getElementById("aiInput").value;
+  let ans="Try breaking the problem step by step.";
+  if(q.includes("sin")) ans="Use sin(angle in degrees)";
+  if(q.includes("square")) ans="Use x^2";
+
+  document.getElementById("aiOutput").innerText=ans;
+}
+
+// GRAPH
+function plot() {
+  let input=document.getElementById("graphInput").value;
+  let c=document.getElementById("graph");
+  let ctx=c.getContext("2d");
+
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.beginPath();
+
+  for(let x=-10;x<10;x+=0.1){
+    let y=eval(input);
+    let px=(x+10)*(c.width/20);
+    let py=c.height/2-y*10;
+    ctx.lineTo(px,py);
+  }
+
+  ctx.stroke();
+}
+</script>
+
+</body>
+</html>
