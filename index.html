@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<!-- SEO -->
+<title>Free Advanced Calculator Online | Scientific Calculator</title>
+<meta name="description" content="Use this free advanced scientific calculator online. Perform calculations like sin, cos, log, square root, power and more easily.">
+<meta name="keywords" content="calculator, scientific calculator, online calculator, math calculator, free calculator">
+<meta name="author" content="ZapFrame">
+
+<!-- Mobile Friendly -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Indexing -->
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph (for sharing) -->
+<meta property="og:title" content="Free Advanced Calculator Online">
+<meta property="og:description" content="Fast and easy scientific calculator online.">
+<meta property="og:type" content="website">
+
+<!-- Favicon -->
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/992/992651.png">
+
+<!-- Schema (VERY IMPORTANT for Google) -->
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebApplication",
+ "name": "Advanced Calculator",
+ "url": "https://yourusername.github.io/calculator-website/",
+ "applicationCategory": "Calculator",
+ "operatingSystem": "All",
+ "description": "Free online scientific calculator with advanced math functions."
+}
+</script>
+
+<style>
+:root {
+  --bg: #0f172a;
+  --box: #1e293b;
+  --btn: #334155;
+  --text: white;
+}
+
+.light {
+  --bg: #f1f5f9;
+  --box: white;
+  --btn: #e2e8f0;
+  --text: black;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 40px;
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+.calculator {
+  background: var(--box);
+  padding: 20px;
+  border-radius: 15px;
+  width: 320px;
+}
+
+input {
+  width: 100%;
+  height: 60px;
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-align: right;
+  border-radius: 10px;
+  border: none;
+  padding: 10px;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+button {
+  height: 50px;
+  border: none;
+  border-radius: 10px;
+  background: var(--btn);
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.equal { background: #22c55e; }
+.clear { background: #ef4444; }
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.history {
+  max-height: 100px;
+  overflow-y: auto;
+  font-size: 12px;
+  margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Advanced Calculator</h1>
+<p>Free online scientific calculator</p>
+
+<div class="calculator">
+  
+  <div class="top-bar">
+    <button onclick="toggleTheme()">🌙</button>
+    <button onclick="toggleScientific()">🧠</button>
+  </div>
+
+  <input id="display" readonly>
+
+  <div class="buttons">
+    <button onclick="clearDisplay()" class="clear">C</button>
+    <button onclick="del()">DEL</button>
+    <button onclick="append('%')">%</button>
+    <button onclick="append('/')">/</button>
+
+    <button onclick="append('7')">7</button>
+    <button onclick="append('8')">8</button>
+    <button onclick="append('9')">9</button>
+    <button onclick="append('*')">*</button>
+
+    <button onclick="append('4')">4</button>
+    <button onclick="append('5')">5</button>
+    <button onclick="append('6')">6</button>
+    <button onclick="append('-')">-</button>
+
+    <button onclick="append('1')">1</button>
+    <button onclick="append('2')">2</button>
+    <button onclick="append('3')">3</button>
+    <button onclick="append('+')">+</button>
+
+    <button onclick="append('0')">0</button>
+    <button onclick="append('.')">.</button>
+    <button onclick="calculate()" class="equal">=</button>
+    <button onclick="append('**')">xʸ</button>
+  </div>
+
+  <div class="buttons" id="scientific" style="display:none;">
+    <button onclick="append('Math.sin(')">sin</button>
+    <button onclick="append('Math.cos(')">cos</button>
+    <button onclick="append('Math.tan(')">tan</button>
+    <button onclick="append('Math.sqrt(')">√</button>
+
+    <button onclick="append('Math.log10(')">log</button>
+    <button onclick="append('Math.log(')">ln</button>
+    <button onclick="append('Math.PI')">π</button>
+    <button onclick="append('Math.E')">e</button>
+  </div>
+
+  <div class="history" id="history"></div>
+
+</div>
+
+<script>
+let display = document.getElementById("display");
+let historyDiv = document.getElementById("history");
+
+function append(val) {
+  display.value += val;
+}
+
+function clearDisplay() {
+  display.value = "";
+}
+
+function del() {
+  display.value = display.value.slice(0, -1);
+}
+
+function calculate() {
+  try {
+    let result = Function("return " + display.value)();
+    historyDiv.innerHTML += display.value + " = " + result + "<br>";
+    display.value = result;
+  } catch {
+    display.value = "Error";
+  }
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("light");
+}
+
+function toggleScientific() {
+  let sci = document.getElementById("scientific");
+  sci.style.display = sci.style.display === "none" ? "grid" : "none";
+}
+
+document.addEventListener("keydown", (e) => {
+  if (!isNaN(e.key) || "+-*/.".includes(e.key)) append(e.key);
+  if (e.key === "Enter") calculate();
+  if (e.key === "Backspace") del();
+});
+</script>
+
+</body>
+</html>
